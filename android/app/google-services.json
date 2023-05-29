@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "291270115281",
+    "firebase_url": "https://fir-practice-c8bff-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "fir-practice-c8bff",
+    "storage_bucket": "fir-practice-c8bff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291270115281:android:c558de01314d7642c66af0",
+        "android_client_info": {
+          "package_name": "com.example.firebasepractice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVaAaFtsvY8_lE1A-waasXWr-jY8JN0-Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
