@@ -1,11 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  ;
   runApp(MyFirebaseApp());
 }
 
@@ -13,16 +17,19 @@ class MyFirebaseApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, //デバッグモードの右上のタグ消す
       title: 'Firebase Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyAuthPage(),
+          primarySwatch: Colors.blue,
+          visualDensity:
+              VisualDensity.adaptivePlatformDensity //視覚密度 適応プラットフォーム密度
+          ),
+      home: MyFirestorePage(),
     );
   }
 }
 
-class MyAuthPage extends StatefulWidget {
+/*class MyAuthPage extends StatefulWidget {
   @override
   _MyAuthPageState createState() => _MyAuthPageState();
 }
@@ -126,5 +133,93 @@ class _MyAuthPageState extends State<MyAuthPage> {
             ]),
           ),
         ));
+  }
+}*/
+
+class MyFirestorePage extends StatefulWidget {
+  @override
+  _MyFirestorePageState createState() => _MyFirestorePageState();
+}
+
+class _MyFirestorePageState extends State<MyFirestorePage> {
+  //作成したドキュメント一覧
+  List<DocumentSnapshot> documentList = [];
+//指定したドキュメントの情報
+  String orderDocumentInfo = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+            child: Column(children: <Widget>[
+      Container(padding: EdgeInsets.all(50)), //上すぎたから余白入れた
+      ElevatedButton(
+          child: Text('コレクション＋ドキュメント作成'),
+          onPressed: () async {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc('id_abc')
+                .set({'name': '鈴木', 'age': '40'});
+          }),
+      ElevatedButton(
+          child: Text('サブコレクション＋ドキュメント作成'),
+          onPressed: () async {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc('id_abc')
+                .collection('orders')
+                .doc('id_123')
+                .set({'price': 600, 'date': '9/13'});
+          }),
+      ElevatedButton(
+          child: Text('ドキュメント一覧取得'),
+          onPressed: () async {
+            final snapshot =
+                await FirebaseFirestore.instance.collection('users').get();
+            setState(() {
+              documentList = snapshot.docs; //.documentsになっていたがエラー .docsで○
+            });
+          }),
+      Column(
+        children: documentList.map((document) {
+          return ListTile(
+            title: Text('${document['name']}さん'),
+            subtitle: Text('${document['age']}歳'),
+          );
+        }).toList(),
+      ),
+      ElevatedButton(
+          child: Text('ドキュメントを指定して取得'),
+          onPressed: () async {
+            final document = await FirebaseFirestore.instance
+                .collection('users')
+                .doc('id_abc')
+                .collection('orders')
+                .doc('id_123')
+                .get();
+            setState(() {
+              orderDocumentInfo = '${document['date']} ${document['price']}円';
+            });
+          }),
+      ListTile(title: Text(orderDocumentInfo)),
+      ElevatedButton(
+          child: Text('ドキュメント更新'),
+          onPressed: () async {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc('id_abc')
+                .update({'age': 41});
+          }),
+      ElevatedButton(
+          child: Text('ドキュメント削除'),
+          onPressed: () async {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc('id_abc')
+                .collection('orders')
+                .doc('id_123')
+                .delete();
+          }),
+    ])));
   }
 }
