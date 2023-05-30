@@ -79,13 +79,17 @@ class _MyAuthPageState extends State<MyAuthPage> {
                       });
                       //登録に失敗した場合
                     } catch (e) {
-                      infoText = "登録NG : ${e.toString()}";
+                      setState(() {
+                        infoText = "登録NG : ${e.toString()}";
+                      });
                     }
                   },
                   child: Text("ユーザー登録")),
+              const SizedBox(height: 8),
+              Text(infoText),
 
 //ログイン用
-              const SizedBox(height: 8),
+              const SizedBox(height: 32),
               TextFormField(
                   decoration: InputDecoration(labelText: "メールアドレス"),
                   onChanged: (String value) {
@@ -93,7 +97,7 @@ class _MyAuthPageState extends State<MyAuthPage> {
                       loginUserEmail = value;
                     });
                   }),
-              const SizedBox(height: 8),
+
               TextFormField(
                   decoration: InputDecoration(labelText: "パスワード"),
                   obscureText: true,
@@ -111,13 +115,16 @@ class _MyAuthPageState extends State<MyAuthPage> {
                           await auth.signInWithEmailAndPassword(
                               email: loginUserEmail,
                               password: loginUserPassword);
+
                       final User user = result.user!;
                       setState(() {
                         infoText = "ログインOK: ${user.email}";
                       });
                       //登録に失敗した場合
                     } catch (e) {
-                      infoText = "ログインNG : ${e.toString()}";
+                      setState(() {
+                        infoText = "ログインNG : ${e.toString()}";
+                      });
                     }
                   },
                   child: Text("ログイン")),
